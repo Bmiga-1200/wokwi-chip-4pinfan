@@ -1,0 +1,77 @@
+name: Build, Test & Release Custom Chip
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Compile Custom Chip (WebAssembly)
+        uses: wokwi/wokwi-chip-clang-action@main
+        with:
+          sources: "src/4pinfan.chip.c"
+
+      - name: Stage Distribution Assets
+        run: |
+          mkdir -p dist
+          # wokwi-chip-clang-action produces dist/chip.wasm
+          # Ensure both generic and specific filenames exist
+          [ -f dist/chip.wasm ] && cp dist/chip.wasm dist/4pinfan.chip.wasm
+          [ -f 4pinfan.chip.json ] && cp 4pinfan.chip.json dist/4pinfan.chip.json
+          [ -f 4pinfan.chip.json ] && cp 4pinfan.chip.json dist/chip.json
+          ls -la dist/
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Run Chip Automated Firmware Tests
+        run: |
+          make test
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: chip
+          path: |
+            dist/chip.json
+            dist/chip.wasm
+            dist/4pinfan.chip.json
+            dist/4pinfan.chip.wasm
+
+  release:
+    name: Release
+    needs: build-and-test
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Compiled Chip Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: chip
+          path: chip
+
+      - name: Create chip.zip Archive
+        run: |
+          cd chip
+          zip -9 ../chip.zip *
+          cd ..
+          unzip -l chip.zip
+
+      - name: Create GitHub Release with chip.zip
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: chip.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
