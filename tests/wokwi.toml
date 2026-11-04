@@ -1,0 +1,11 @@
+[wokwi]
+version = 1
+firmware = "./uno-pwm-tach/build/arduino.avr.uno/uno-pwm-tach.ino.hex"
+elf = "./uno-pwm-tach/build/arduino.avr.uno/uno-pwm-tach.ino.elf"
+rfc2217ServerPort = 4000
+gdbServerPort=3333
+
+[[chip]]
+name = '4pinfan'  # To use the chip in diagram.json, add a part with "chip-lm75" type.
+binary = '../dist/4pinfan.chip.wasm'
+

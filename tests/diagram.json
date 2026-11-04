@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "author": "Bmiga-1200",
+  "editor": "b1200-ec",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": -37.8, "left": -29.4, "attrs": {} },
+    {
+      "type": "chip-scope",
+      "id": "scope1",
+      "top": -66.18,
+      "left": 350.4,
+      "attrs": {
+        "sampleTimeUs": "50",
+        "sampleTimeMs": "0",
+        "triggerChannel": "1",
+        "triggerMode": "1",
+        "crtColor": "0",
+        "trace0Color": "14",
+        "trace1Color": "12",
+        "trace2Color": "10",
+        "trace3Color": "2"
+      }
+    },
+    { "type": "chip-4pinfan", "id": "chip1", "top": -104.58, "left": 235.2, "attrs": {} }
+  ],
+  "connections": [
+    [ "chip1:TACH", "uno:2", "gold", [ "h0" ] ],
+    [ "chip1:PWM", "uno:10", "green", [ "h0" ] ],
+    [ "uno:2", "scope1:D1", "magenta", [ "v0" ] ],
+    [ "uno:10", "scope1:D0", "purple", [ "v0" ] ]
+  ],
+  "dependencies": { "chip-scope": "github:Dlloydev/Wokwi-Chip-scope@1.0.7" }
+}
