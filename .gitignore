@@ -1,0 +1,10 @@
+dist/
+*.o
+*.wasm
+build/
+*.bin
+*.elf
+*.hex
+.vscode/
+.DS_Store
+chip.zip

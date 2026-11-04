@@ -1,0 +1,20 @@
+{
+  "name": "4pin-fan",
+  "author": "bmiga-1200",
+  "pins": [
+    "TACH",
+    "PWM",
+    "GND",
+    "POWER"
+  ],
+  "controls": [
+    {
+      "id": "max_rpm",
+      "label": "Max Fan RPM",
+      "type": "range",
+      "min": 500,
+      "max": 8000,
+      "step": 500
+    }
+  ]
+}
